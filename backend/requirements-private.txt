@@ -1,0 +1,7 @@
+# Requires access to the original ec_* package registry (see README.md).
+# Versions recovered from the existing development environment.
+ec-helpers==1.0.4
+ec-logging==1.0.13
+ec-postgres==1.0.5
+ec-redis==1.0.10
+ec-searchia==1.0.2
