@@ -7,6 +7,41 @@ assistant. Create an account, describe your skills and experience, and share you
 username URL. Visitors can explore your profile and ask questions grounded in
 its content through retrieval-augmented generation (RAG).
 
+## Product walkthrough
+
+Create an account → build your profile → share your link → let visitors ask questions.
+
+These are captures of the actual frontend running locally. The Alex Morgan
+profile and chat response are fictional examples supplied by a mock API for this
+walkthrough; they do not demonstrate a live backend or model response.
+Click any screenshot to see it at full size.
+
+### Discover PortfolioGPT
+
+The landing page introduces the product and leads visitors into account creation.
+
+![PortfolioGPT landing page with the Create your portfolio call to action](docs/screenshots/01-landing.jpg)
+
+| 1. Create your account | 2. Build and edit your profile |
+| --- | --- |
+| Choose the username that becomes your public portfolio URL. | Add your background, skills, experience, education and links. |
+| ![Account creation form with a personal portfolio username](docs/screenshots/02-signup.jpg) | ![Profile editor showing sample details and profile completion](docs/screenshots/03-dashboard.jpg) |
+
+| 3. Publish and share | 4. Ask the portfolio assistant |
+| --- | --- |
+| The confirmation screen gives you a link to copy or visit. | Visitors can ask about your skills and experience in natural language. |
+| ![Publishing confirmation with Copy link and Visit portfolio actions](docs/screenshots/04-publish.jpg) | ![Portfolio chat showing a sample question and illustrative assistant response](docs/screenshots/06-ai-chat.jpg) |
+
+<details>
+<summary><strong>Explore the complete public portfolio</strong></summary>
+
+The public page brings identity, chat, skills, work experience and education
+together in one shareable profile.
+
+![Complete sample public portfolio with identity, AI chat, skills, experience and education](docs/screenshots/05-public-portfolio.jpg)
+
+</details>
+
 ## Features
 
 - Account signup and signin with bcrypt password hashing and RSA-signed JWTs.
