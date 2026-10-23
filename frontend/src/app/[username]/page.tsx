@@ -4,7 +4,7 @@ import PortfolioPage from "@/components/portfolio/PortfolioPage";
 import { PortfolioResponse } from "@/lib/api";
 import { Portfolio } from "@/components/portfolio/types";
 
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080").replace(/\/$/, "");
 
 async function fetchPortfolio(username: string): Promise<PortfolioResponse | null> {
   try {
@@ -48,7 +48,7 @@ function mapToPortfolio(res: PortfolioResponse): Portfolio {
   };
 }
 
-type Props = { params: { username: string } };
+type Props = { params: Promise<{ username: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { username } = await params;
