@@ -1,120 +1,131 @@
-# PortfolioGPT
+# 🧠 PortfolioGPT
 
 **A personal portfolio that visitors can talk to.**
 
-PortfolioGPT turns a professional profile into a shareable website with an AI
-assistant. Create an account, describe your skills and experience, and share your
-username URL. Visitors can explore your profile and ask questions grounded in
-its content through retrieval-augmented generation (RAG).
+Turn your skills and experience into a shareable profile with an AI assistant.
+Visitors explore your background and ask questions grounded in your portfolio
+through retrieval-augmented generation (RAG).
 
-## Product walkthrough
+**Sign up → Build your profile → Share your link → Start a conversation**
 
-Create an account → build your profile → share your link → let visitors ask questions.
+## ✨ Features
 
-These are captures of the actual frontend running locally. The Alex Morgan
-profile and chat response are fictional examples supplied by a mock API for this
-walkthrough; they do not demonstrate a live backend or model response.
-Click any screenshot to see it at full size.
+- **Your own page** at `/<username>`, with skills, experience, education and links.
+- **AI portfolio chat** with semantic retrieval and saved conversation history.
+- **Profile dashboard** to edit your information and refresh its embeddings.
+- **Account authentication** with bcrypt password hashing and RSA-signed JWTs.
+- **Flexible AI providers** with separate OpenAI-compatible chat and embedding endpoints.
+- **Responsive UI** with animations and Markdown chat replies.
 
-### Discover PortfolioGPT
+## 📸 Product walkthrough
 
-The landing page introduces the product and leads visitors into account creation.
+Screenshots show the actual frontend. Alex Morgan's profile and chat reply are
+fictional examples supplied by a mock API; no live backend or model response is shown.
 
-![PortfolioGPT landing page with the Create your portfolio call to action](docs/screenshots/01-landing.jpg)
+![PortfolioGPT landing page](docs/screenshots/01-landing.jpg)
 
-| 1. Create your account | 2. Build and edit your profile |
+| 🪪 1. Create your account | 📝 2. Build your profile |
 | --- | --- |
-| Choose the username that becomes your public portfolio URL. | Add your background, skills, experience, education and links. |
-| ![Account creation form with a personal portfolio username](docs/screenshots/02-signup.jpg) | ![Profile editor showing sample details and profile completion](docs/screenshots/03-dashboard.jpg) |
+| Choose your public username. | Add your background and skills. |
+| ![Account creation](docs/screenshots/02-signup.jpg) | ![Profile dashboard](docs/screenshots/03-dashboard.jpg) |
 
-| 3. Publish and share | 4. Ask the portfolio assistant |
+| 🔗 3. Publish and share | 💬 4. Let visitors ask questions |
 | --- | --- |
-| The confirmation screen gives you a link to copy or visit. | Visitors can ask about your skills and experience in natural language. |
-| ![Publishing confirmation with Copy link and Visit portfolio actions](docs/screenshots/04-publish.jpg) | ![Portfolio chat showing a sample question and illustrative assistant response](docs/screenshots/06-ai-chat.jpg) |
+| Copy your personal portfolio link. | Explore your experience through chat. |
+| ![Publishing confirmation](docs/screenshots/04-publish.jpg) | ![Illustrative portfolio conversation](docs/screenshots/06-ai-chat.jpg) |
 
 <details>
-<summary><strong>Explore the complete public portfolio</strong></summary>
+<summary>👀 See the complete public portfolio</summary>
 
-The public page brings identity, chat, skills, work experience and education
-together in one shareable profile.
-
-![Complete sample public portfolio with identity, AI chat, skills, experience and education](docs/screenshots/05-public-portfolio.jpg)
+![Public profile with chat, skills, experience and education](docs/screenshots/05-public-portfolio.jpg)
 
 </details>
 
-## Features
+## 🛠️ Tech stack
 
-- Account signup and signin with bcrypt password hashing and RSA-signed JWTs.
-- A dashboard to create and update your profile, skills, work experience,
-  education, and website/GitHub/LinkedIn links.
-- Public portfolio pages at `/<username>`.
-- Portfolio-scoped chat with conversation history stored in PostgreSQL.
-- Embedding ingestion and semantic retrieval through Milvus.
-- OpenAI-compatible chat and embedding providers configured independently.
-- Responsive interface with animated sections and Markdown chat responses.
-
-## Stack and structure
-
-| Layer | Technologies |
+| Layer | Built with |
 | --- | --- |
-| Web | Next.js 16, React 19, TypeScript, Tailwind CSS 4, Radix UI, Framer Motion |
-| API | FastAPI, Pydantic, SQLModel / SQLAlchemy, Alembic |
-| Storage | PostgreSQL, Milvus, MinIO, Redis |
-| AI | OpenAI Python SDK with configurable compatible provider URLs |
+| Frontend | Next.js 16 · React 19 · TypeScript · Tailwind CSS 4 · Radix UI · Framer Motion |
+| Backend | FastAPI · Pydantic · SQLModel / SQLAlchemy · Alembic |
+| Infrastructure | PostgreSQL · Milvus · Redis · MinIO |
+| AI | OpenAI Python SDK · Configurable chat and embedding providers |
+
+## 🚀 Run locally
+
+**Requirements:** Node.js 20.9+ (`.nvmrc` selects 24), Python 3.12, Docker,
+PostgreSQL, Redis and AI provider credentials. The backend also requires access
+to the original private `ec_*` packages.
+
+Start the frontend:
+
+```bash
+cd frontend
+npm ci
+cp .env.example .env.local
+npm run dev
+```
+
+Open **http://localhost:3000**. Account, profile and chat features require the
+backend; set `NEXT_PUBLIC_API_BASE_URL` in `.env.local` if it differs from
+`http://localhost:8080`.
+
+Backend instructions and API details are included below. A standalone
+[setup guide](docs/SETUP.md) is also available.
+
+## ⚙️ Technical reference
+
+<details>
+<summary><strong>📦 Architecture and project structure</strong></summary>
+
+Profile updates refresh Milvus embeddings; chat retrieves portfolio-scoped context
+and uses the configured model to answer. PostgreSQL stores profiles and messages.
 
 ```text
 backend/
   app/
-    api/                 # Health and versioned HTTP routes
-    core/                # Settings and service wiring
-    db/                  # Models, repositories, portfolio migration chain
-    migrations/          # Older migration chain retained for reference
-    rsa/                 # Generate your own signing keys locally
-    services/            # Auth, portfolio, chat/RAG, provider and file services
+    api/                 # Health and versioned routes
+    core/                # Settings, dependencies and service wiring
+    db/                  # Models, repositories and portfolio migration chain
+    migrations/          # Older migration chain
+    rsa/                 # Locally generated JWT signing keys
+    services/            # Auth, portfolio, chat/RAG, providers and file storage
   docker-compose.yml     # Milvus, etcd, MinIO and Attu
   .env.example
   requirements.txt
   requirements-private.txt
 frontend/
-  src/app/               # Landing, authentication, dashboard and public pages
+  src/app/               # Landing, auth, dashboard and public pages
   src/components/
   src/context/           # Authentication state
-  src/lib/               # API client and shared utilities
+  src/lib/               # API client and utilities
   .env.example
 ```
 
-## Run locally
+</details>
 
-### Prerequisites
+<details>
+<summary><strong>🔧 Backend setup, infrastructure and configuration</strong></summary>
 
-- Python 3.12 and Node.js 20.9+ (the frontend `.nvmrc` selects Node.js 24).
-- PostgreSQL and Redis running locally or on accessible hosts.
-- Docker with Compose for the included Milvus stack.
-- Chat and embedding provider credentials.
-- Access to the original `ec_*` Python packages. These are external shared
-  dependencies, **not included in this repository**. Their installed versions are
-  listed in `backend/requirements-private.txt`. Configure your authorized package
-  registry before installing them; public dependencies alone cannot start the API.
-
-### 1. Configure the backend
-
-From the repository root:
+Run from the repository root with Python 3.12:
 
 ```bash
 python3.12 -m venv backend/.venv
 source backend/.venv/bin/activate
 python -m pip install -r backend/requirements.txt
-# After configuring access to your original ec_* package registry:
+# Configure your authorized ec_* registry before this step:
 python -m pip install -r backend/requirements-private.txt
 cp backend/.env.example backend/.env
 ```
 
-Edit `backend/.env` with your database, Redis, storage and AI provider settings.
-The secondary `POSTGRES_COMMERCE_*` client and the legacy integration variables
-remain required by the existing service wiring. For local use, both PostgreSQL
-clients can point to the same database.
+The external `ec_*` packages are not bundled. Their installed versions are listed
+in `backend/requirements-private.txt`; public dependencies alone cannot start the API.
 
-Generate a new RSA key pair:
+Set database, Redis, MinIO, logging and AI provider values in `backend/.env`.
+Both chat and embeddings have independent URLs, credentials and model names.
+Legacy integration variables and `POSTGRES_COMMERCE_*` remain required by the
+service wiring; both PostgreSQL clients can use the same local database.
+
+Generate the RSA keys read by settings at startup:
 
 ```bash
 mkdir -p backend/app/rsa
@@ -123,33 +134,30 @@ openssl rsa -pubout -in backend/app/rsa/private.key -out backend/app/rsa/public.
 chmod 600 backend/app/rsa/private.key
 ```
 
-The application reads these files when loading settings. Each installation must
-supply its own keys. Environment files, keys, API request scratch files, editor
-settings, dependency directories and generated files are excluded from Git.
-
-### 2. Start supporting services
+Each installation needs its own keys. `.gitignore` excludes environment secrets,
+keys, request scratch files, editor settings, dependencies and generated output.
 
 ```bash
 docker compose -f backend/docker-compose.yml up -d
 ```
 
-The compose file starts Milvus (`19530`), etcd (`2379`), MinIO (`9000`, console
-`9001`) and Attu (`8000`). PostgreSQL and Redis must be provisioned separately.
-The compose credentials are local development defaults; change them before any
-shared deployment. No application servers are started by this compose file.
+| Included service | Local ports |
+| --- | --- |
+| Milvus | `19530` (vector database), `9091` (management) |
+| etcd | `2379` |
+| MinIO | `9000` (API), `9001` (console) |
+| Attu | `8000` |
 
-### 3. Prepare the database
+Provision **PostgreSQL and Redis separately**. Compose does not start the API or
+frontend, has no persistent volumes, and uses development credentials that must
+be changed for shared deployments.
 
-Create the database and user matching your `.env`. The historical Alembic files
-are preserved, but the portfolio chain currently creates a `chat` table in one
-revision and later expects a `portfolio` table. Review and repair this migration
-chain before applying it to a database; a fresh `alembic upgrade head` is not a
-verified setup path. The active portfolio models live in `backend/app/db/models.py`
-and the corresponding migration directory is `backend/app/db/migrations`.
+Create the database/user matching `.env`. **Review migrations before applying:**
+the portfolio chain creates `chat`, then expects `portfolio`; a fresh
+`alembic upgrade head` is not verified. Current models are in
+`backend/app/db/models.py`, with migrations in `backend/app/db/migrations`.
 
-### 4. Start the API
-
-In the activated virtual environment, export the settings and run from `backend/app`:
+From the repository root, in the activated environment:
 
 ```bash
 set -a
@@ -159,56 +167,47 @@ cd backend/app
 uvicorn main:app --host 127.0.0.1 --port 8080 --reload
 ```
 
-These commands assume you begin at the repository root. Settings read process
-environment variables; the `.env` is explicitly loaded by the shell here.
-API documentation is available at http://localhost:8080/docs with the default
-empty `API_SERVICE_PREFIX`.
+Settings read process environment variables, so export `.env` explicitly.
+Swagger UI: **http://localhost:8080/docs**, with an empty `API_SERVICE_PREFIX`.
+The frontend's `NEXT_PUBLIC_API_BASE_URL` is public and baked into the browser
+bundle: set it before building and never place secrets in it.
 
-### 5. Start the frontend
+</details>
 
-In another terminal, from the repository root:
+<details>
+<summary><strong>🔌 API endpoints and deployment notes</strong></summary>
 
-```bash
-cd frontend
-nvm use # Optional, if you use nvm
-npm ci
-cp .env.example .env.local
-npm run dev
-```
-
-Open http://localhost:3000. `NEXT_PUBLIC_API_BASE_URL` defaults to
-`http://localhost:8080`; set it before building for another environment. It is
-included in the browser bundle, so it must contain no secrets.
-
-## API overview
-
-Paths below use the default empty service prefix.
+Paths assume an empty `API_SERVICE_PREFIX`.
 
 | Method | Path | Purpose |
 | --- | --- | --- |
-| POST | `/v1/users/signup` | Create account and return tokens |
+| POST | `/v1/users/signup` | Create an account and return tokens |
 | POST | `/v1/users/signin` | Authenticate and return tokens |
-| GET | `/v1/portfolio/me/portfolio` | Read your portfolio (Bearer token) |
-| PATCH | `/v1/portfolio/me/portfolio` | Create/update and re-index your portfolio (Bearer token) |
-| GET | `/v1/portfolio/{username}` | Read a public portfolio |
-| POST | `/v1/chat/{portfolio_username}/chat` | Ask a question about a portfolio |
+| GET | `/v1/portfolio/me/portfolio` | Read your portfolio; Bearer token required |
+| PATCH | `/v1/portfolio/me/portfolio` | Create/update and re-index; Bearer token required |
+| GET | `/v1/portfolio/{username}` | Read a public profile |
+| POST | `/v1/chat/{portfolio_username}/chat` | Ask about a portfolio |
 
-## Development checks
+Before deployment, configure explicit CORS origins: the API currently combines
+wildcard origins with credentials. Authentication and chat session behavior need
+review. Full backend startup also depends on the external packages, reachable
+infrastructure, valid model credentials and a reviewed migration path.
+
+</details>
+
+## 🧪 Frontend checks
+
+From `frontend/`:
 
 ```bash
-cd frontend
 npx tsc --noEmit
 npm run lint
 npm run build
 ```
 
-## Current limitations
+## 🚧 Project status
 
-This repository preserves an existing development project. Full backend startup
-requires the external `ec_*` packages, configured infrastructure, valid model
-credentials and a reviewed database migration path. The included compose stack
-has no persistent volume configuration. The current API permits wildcard CORS
-origins while enabling credentials; configure explicit origins for browser calls
-that include credentials. Authentication and chat session behavior also need
-review before production use. No live service is implied by the
-`portfoliogpt.com` strings retained in UI metadata and response examples.
+An existing development project: private backend dependencies and a migration
+inconsistency prevent a turnkey fresh setup. Existing lint issues remain;
+[setup notes](docs/SETUP.md#current-limitations) cover deployment limitations.
+`portfoliogpt.com` in the UI is branding, not a verified live deployment.
